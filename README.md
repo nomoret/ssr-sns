@@ -1,2 +1,2 @@
-# ssr-sns
-Studying SSR
+# React SSR Typescript
+- Studying SSR
