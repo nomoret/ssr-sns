@@ -3,12 +3,12 @@ import Head from "next/head";
 import AppLayout from "../components/AppLayout";
 import Link from "next/link";
 
-const MyApp = ({ Component, pageProps }: AppProps) => {
-  console.log(pageProps);
+const MyApp = ({ Component, pageProps, router }: AppProps) => {
+  console.log(router);
   return (
     <>
       <Head>
-        <title>Title</title>
+        <title>{`Title - ${router.route}`}</title>
       </Head>
       <AppLayout>
         <Component {...pageProps} />
