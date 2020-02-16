@@ -1,5 +1,10 @@
 import React, { useState, useCallback } from "react";
 import { NextPage } from "next";
+import Button from "@material-ui/core/Button";
+import Container from "@material-ui/core/Container";
+import TextField from "@material-ui/core/TextField";
+import Typography from "@material-ui/core/Typography";
+import Paper from "@material-ui/core/Paper";
 
 interface Query {
   text: string;
@@ -54,23 +59,32 @@ const Word2Vec: NextPage<Props> = () => {
   );
 
   return (
-    <div>
-      <h1>Word2Vec</h1>
+    <Container maxWidth="sm">
+      <Typography variant="h3" component="h1" gutterBottom>
+        Word2Vec
+      </Typography>
       <div>
         <form onSubmit={handleOnSubmit}>
-          <input
-            type="text"
+          <TextField
             placeholder="korea-seoul+tokyo"
             onChange={handleOnChange}
             value={value}
+            variant="outlined"
+            margin="normal"
             required
+            fullWidth
+            autoFocus
           />
-          <input type="submit" />
+          <Button type="submit" fullWidth variant="contained" color="primary">
+            Predict
+          </Button>
         </form>
       </div>
-      <div>
+      <Paper variant="outlined">
         <div>
-          <h3>Query</h3>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Query
+          </Typography>
           <div>
             {queries.map(({ text, pos, positive }, index) => {
               return (
@@ -82,11 +96,13 @@ const Word2Vec: NextPage<Props> = () => {
           </div>
         </div>
         <div>
-          <h3>Result</h3>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Result
+          </Typography>
           <div>{result}</div>
         </div>
-      </div>
-    </div>
+      </Paper>
+    </Container>
   );
 };
 

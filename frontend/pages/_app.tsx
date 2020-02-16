@@ -1,7 +1,9 @@
 import { AppProps } from "next/app";
 import Head from "next/head";
 import AppLayout from "../components/AppLayout";
-import Link from "next/link";
+import { ThemeProvider } from "@material-ui/core/styles";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import theme from "../theme/theme";
 
 const MyApp = ({ Component, pageProps, router }: AppProps) => {
   console.log(router);
@@ -10,9 +12,12 @@ const MyApp = ({ Component, pageProps, router }: AppProps) => {
       <Head>
         <title>{`Title - ${router.route}`}</title>
       </Head>
-      <AppLayout>
-        <Component {...pageProps} />
-      </AppLayout>
+      <ThemeProvider theme={theme}>
+        <AppLayout>
+          <CssBaseline />
+          <Component {...pageProps} />
+        </AppLayout>
+      </ThemeProvider>
     </>
   );
 };
