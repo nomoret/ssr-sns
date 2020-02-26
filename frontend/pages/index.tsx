@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { NextPage } from "next";
 import Container from "@material-ui/core/Container";
 import Typography from "@material-ui/core/Typography";
-import Auth from "./auth";
 
 import { useSelector } from "react-redux";
 import { RootState } from "../reducers";
 import { UserState } from "../reducers/user";
+import Auth from "../containers/Auth";
 
 interface Props {}
 
@@ -15,19 +15,10 @@ const Home: NextPage<Props> = () => {
 
   return (
     <Container maxWidth="sm">
-      {!me && (
-        <>
-          <Typography variant="h3">Home Page</Typography>
-          <Typography variant="subtitle1">plz log in</Typography>
-          <Auth />
-        </>
-      )}
-      {me && (
-        <>
-          <Typography variant="h3">Home Page</Typography>
-          <Typography variant="subtitle1">try this</Typography>
-        </>
-      )}
+      <>
+        <Typography variant="h3">Home Page</Typography>
+        {!me ? <Auth /> : <Typography variant="subtitle1">try this</Typography>}
+      </>
     </Container>
   );
 };

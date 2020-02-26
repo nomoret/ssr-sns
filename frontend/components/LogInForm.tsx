@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { LOG_IN_REQUEST, LOG_OUT_REQUEST } from "../reducers/user";
 import { RootState } from "../reducers";
 import { UserState } from "../reducers/user";
+import { useRouter } from "next/router";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -72,12 +73,6 @@ const LogInForm: React.FC<Props> = () => {
     [userNameInput, passwordInput]
   );
 
-  const handleLogOutClick = (e: any) => {
-    dispatch({
-      type: LOG_OUT_REQUEST
-    });
-  };
-
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -114,21 +109,6 @@ const LogInForm: React.FC<Props> = () => {
           <CircularProgress size={48} className={classes.buttonProgress} />
         )}
       </form>
-      <div>
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          color="primary"
-          disabled={isLoggingOut}
-          onClick={handleLogOutClick}
-        >
-          Log out
-        </Button>
-        {isLoggingOut && (
-          <CircularProgress size={48} className={classes.buttonProgress} />
-        )}
-      </div>
     </div>
   );
 };

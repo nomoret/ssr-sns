@@ -15,16 +15,19 @@ import reducer from "../reducers";
 import rootSaga from "../sagas";
 
 import axios from "axios";
+import { LOAD_USER_REQUEST } from "../reducers/user";
 
 interface MyAppProps extends AppProps {
   store: any;
 }
 
 const MyApp = ({ Component, store, pageProps, router }: MyAppProps) => {
+  const url = router.route;
+
   return (
     <>
       <Head>
-        <title>{`Title - ${router.route}`}</title>
+        <title>{`Title - ${url === "/" ? "home" : url}`}</title>
       </Head>
       <ThemeProvider theme={theme}>
         <Provider store={store}>
@@ -38,21 +41,25 @@ const MyApp = ({ Component, store, pageProps, router }: MyAppProps) => {
   );
 };
 
-declare global {
-  interface Window {
-    __REDUX_DEVTOOLS_EXTENSION__: Function;
-    __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: Function;
-  }
-}
-
 MyApp.getInitialProps = async (context: AppContext) => {
   const { ctx, Component } = context;
   let pageProps = {};
 
+  const state = ctx.store.getState();
   const cookie = ctx.isServer ? ctx.req?.headers.cookie : "";
-  axios.defaults.headers.Cookie = "";
+
+  if (ctx.isServer) {
+    axios.defaults.headers.Cookie = "";
+  }
+
   if (ctx.isServer && cookie) {
     axios.defaults.headers.Cookie = cookie;
+  }
+
+  if (!state.user.me) {
+    ctx.store.dispatch({
+      type: LOAD_USER_REQUEST
+    });
   }
 
   if (Component.getInitialProps) {

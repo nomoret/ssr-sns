@@ -6,7 +6,7 @@ import { green } from "@material-ui/core/colors";
 import useInput from "../lib/useInput";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { LOG_IN_REQUEST } from "../reducers/user";
+import { LOG_IN_REQUEST, SIGN_UP_REQUEST } from "../reducers/user";
 import { RootState } from "../reducers";
 import { UserState } from "../reducers/user";
 
@@ -48,42 +48,41 @@ interface Props {}
 const SignUpForm: React.FC<Props> = () => {
   const classes = useStyles();
 
-  const [loading, setLoading] = useState(false);
   const [passwordValidate, setPasswordValidate] = useState(true);
+
+  const { isSigningUp, isSignedUp, signUpErrorReason } = useSelector<
+    RootState,
+    UserState
+  >(state => state.user);
 
   const userNameInput = useInput("");
   const emailInput = useInput("");
   const passwordInput = useInput("");
   const passwordCheckInput = useInput("");
 
+  const dispatch = useDispatch();
+
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      console.log(e, userNameInput.bind, passwordInput.bind);
-      setLoading(true);
 
-      setTimeout(() => {
-        setLoading(false);
+      if (passwordInput.value !== passwordCheckInput.value) {
+        return setPasswordValidate(false);
+      }
 
-        if (passwordInput.value === passwordCheckInput.value) {
-          console.log("암호 굿");
-
-          axios.post(`http://localhost:8000/users/signup`, {
-            username: userNameInput.value,
-            email: emailInput.value,
-            password: passwordInput.value
-          });
-          setPasswordValidate(true);
-        } else {
-          console.log("암호 배드");
-          setPasswordValidate(false);
+      dispatch({
+        type: SIGN_UP_REQUEST,
+        data: {
+          username: userNameInput.value,
+          email: emailInput.value,
+          password: passwordInput.value
         }
-
-        // userNameInput.clear();
-        // passwordInput.clear();
-      }, 2000);
+      });
+      // userNameInput.clear();
+      // passwordInput.clear();
+      // emailInput.clear();
     },
-    [userNameInput, passwordInput]
+    [userNameInput, emailInput, passwordInput]
   );
 
   return (
@@ -108,7 +107,6 @@ const SignUpForm: React.FC<Props> = () => {
           margin="normal"
           required
           fullWidth
-          autoFocus
         />
         <TextField
           type="password"
@@ -137,16 +135,17 @@ const SignUpForm: React.FC<Props> = () => {
           fullWidth
           variant="contained"
           color="primary"
-          disabled={loading}
+          disabled={isSigningUp}
         >
           Sign Up
         </Button>
-        {loading && (
+        {isSigningUp && (
           <CircularProgress size={24} className={classes.buttonProgress} />
         )}
       </form>
-      <p style={{ color: "red" }}>* hey!!!</p>
-      {/* {validate && <p>hey!!!</p>} */}
+      {!isSigningUp && signUpErrorReason && (
+        <p style={{ color: "red" }}>* {signUpErrorReason}</p>
+      )}
     </div>
   );
 };

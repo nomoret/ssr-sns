@@ -1,5 +1,5 @@
 import { all, call, fork, put, takeEvery, delay } from "redux-saga/effects";
-import axios from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import {
   LOG_IN_FAILURE,
   LOG_IN_REQUEST,
@@ -9,8 +9,13 @@ import {
   LOG_OUT_SUCCESS,
   SIGN_UP_FAILURE,
   SIGN_UP_REQUEST,
-  SIGN_UP_SUCCESS
+  SIGN_UP_SUCCESS,
+  LOAD_USER_SUCCESS,
+  LOAD_USER_FAILURE,
+  LOAD_USER_REQUEST
 } from "../reducers/user";
+
+import Router from "next/router";
 
 function logInAPI(loginData: { username: string; password: string }) {
   return axios.post("/users/login", loginData, {
@@ -20,15 +25,12 @@ function logInAPI(loginData: { username: string; password: string }) {
 
 function* logIn(action: { type: string; data: any }) {
   try {
-    yield delay(1000);
     const result = yield call(logInAPI, action.data);
     yield put({
-      // put은 dispatch 동일
       type: LOG_IN_SUCCESS,
       data: result.data
     });
   } catch (e) {
-    // loginAPI 실패
     console.error(e);
     yield put({
       type: LOG_IN_FAILURE
@@ -52,11 +54,11 @@ function logOutAPI() {
 
 function* logOut() {
   try {
-    yield delay(1000);
     yield call(logOutAPI);
     yield put({
       type: LOG_OUT_SUCCESS
     });
+    yield Router.push("/");
   } catch (e) {
     console.error(e);
     yield put({
@@ -71,24 +73,21 @@ function* watchLogOut() {
 }
 
 function signUpAPI(signUpData: any) {
-  // 서버에 요청을 보내는 부분
-  return axios.post("/users/", signUpData);
+  return axios.post("/users/signup", signUpData);
 }
 
 function* signUp(action: any) {
   try {
-    // yield call(signUpAPI);
-    yield call(signUpAPI, action.data);
+    const result = yield call(signUpAPI, action.data);
     yield put({
-      // put은 dispatch 동일
       type: SIGN_UP_SUCCESS
     });
   } catch (e) {
-    // loginAPI 실패
     console.error(e);
     yield put({
       type: SIGN_UP_FAILURE,
-      error: e
+      error: e.response.data,
+      data: "asdsa"
     });
   }
 }
@@ -97,6 +96,40 @@ function* watchSignUp() {
   yield takeEvery(SIGN_UP_REQUEST, signUp);
 }
 
+function loadUserAPI() {
+  return axios.get(`/users/refresh`, {
+    withCredentials: true
+  });
+}
+
+function* loadUser() {
+  try {
+    const result = yield call(loadUserAPI);
+    yield put({
+      type: LOAD_USER_SUCCESS,
+      data: result.data
+    });
+  } catch (e) {
+    const res: AxiosError = e;
+    // console.error(res.response?.statusText);
+    // console.error(res.response?.data);
+
+    yield put({
+      type: LOAD_USER_FAILURE,
+      error: res.response?.data
+    });
+  }
+}
+
+function* watchLoadUser() {
+  yield takeEvery(LOAD_USER_REQUEST, loadUser);
+}
+
 export default function* userSaga() {
-  yield all([fork(watchLogIn), fork(watchLogOut), fork(watchSignUp)]);
+  yield all([
+    fork(watchLogIn),
+    fork(watchLogOut),
+    fork(watchSignUp),
+    fork(watchLoadUser)
+  ]);
 }

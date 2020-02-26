@@ -83,16 +83,59 @@ const userReducer = (state = initialState, action: UserAction) => {
     case LOG_OUT_REQUEST: {
       return {
         ...state,
-        isLoggedOut: false,
         isLoggingOut: true
       };
     }
     case LOG_OUT_SUCCESS: {
       return {
         ...state,
-        isLoggedOut: true,
         isLoggingOut: false,
         me: null
+      };
+    }
+    case LOG_OUT_FAILURE: {
+      return {
+        ...state,
+        isLoggingOut: false,
+        me: null
+      };
+    }
+    case LOAD_USER_REQUEST: {
+      return {
+        ...state
+      };
+    }
+    case LOAD_USER_SUCCESS: {
+      return {
+        ...state,
+        me: action.data
+      };
+    }
+    case LOAD_USER_FAILURE: {
+      return {
+        ...state
+      };
+    }
+    case SIGN_UP_REQUEST: {
+      return {
+        ...state,
+        isSigningUp: true,
+        isSignedUp: false,
+        signUpErrorReason: ""
+      };
+    }
+    case SIGN_UP_SUCCESS: {
+      return {
+        ...state,
+        isSigningUp: false,
+        isSignedUp: true
+      };
+    }
+    case SIGN_UP_FAILURE: {
+      return {
+        ...state,
+        isSigningUp: false,
+        signUpErrorReason: action.error
       };
     }
     default:
