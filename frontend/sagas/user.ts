@@ -20,7 +20,7 @@ function logInAPI(loginData: { username: string; password: string }) {
 
 function* logIn(action: { type: string; data: any }) {
   try {
-    yield delay(2000);
+    yield delay(1000);
     const result = yield call(logInAPI, action.data);
     yield put({
       // put은 dispatch 동일
@@ -52,7 +52,7 @@ function logOutAPI() {
 
 function* logOut() {
   try {
-    yield delay(2000);
+    yield delay(1000);
     yield call(logOutAPI);
     yield put({
       type: LOG_OUT_SUCCESS

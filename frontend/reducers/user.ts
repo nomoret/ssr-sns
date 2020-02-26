@@ -34,6 +34,7 @@ interface UserAction extends Action<UserActionType> {
 }
 
 export type UserState = {
+  isLoggedOut: boolean;
   isLoggingOut: boolean;
   isLoggingIn: boolean;
   logInErrorReason: string;
@@ -44,6 +45,7 @@ export type UserState = {
 };
 
 const initialState: UserState = {
+  isLoggedOut: false, // 로그아웃 성공
   isLoggingOut: false, // 로그아웃 시도중
   isLoggingIn: false, // 로그인 시도중
   logInErrorReason: "", // 로그인 실패 사유
@@ -81,12 +83,14 @@ const userReducer = (state = initialState, action: UserAction) => {
     case LOG_OUT_REQUEST: {
       return {
         ...state,
+        isLoggedOut: false,
         isLoggingOut: true
       };
     }
     case LOG_OUT_SUCCESS: {
       return {
         ...state,
+        isLoggedOut: true,
         isLoggingOut: false,
         me: null
       };
