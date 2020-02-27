@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from "react";
-import { NextPage } from "next";
+import React, { useEffect, useState, useCallback } from "react";
+import { NextPage, NextPageContext } from "next";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
 import TextField from "@material-ui/core/TextField";
@@ -8,6 +8,8 @@ import Paper from "@material-ui/core/Paper";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import InputLabel from "@material-ui/core/InputLabel";
+import useBlockIfNotLogin from "../lib/useBlockIfNotLogin";
+import useBlockIfNotLoginClient from "../lib/useBlockIfNotLoginClient";
 
 interface Result {
   word: string;
@@ -17,6 +19,8 @@ interface Result {
 interface Props {}
 
 const Classfication: NextPage<Props> = () => {
+  const router = useBlockIfNotLoginClient();
+
   const [value, setValue] = useState("");
   const [rankCount, setRankCount] = useState(10);
   const [resultList, setResultList] = useState<Result[]>([]);
@@ -91,6 +95,10 @@ const Classfication: NextPage<Props> = () => {
       </div>
     </Container>
   );
+};
+
+Classfication.getInitialProps = async (ctx: NextPageContext) => {
+  // useBlockIfNotLogin(ctx);
 };
 
 export default Classfication;

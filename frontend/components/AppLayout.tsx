@@ -72,19 +72,21 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
             <div className={classes.toolbar} />
             <Divider />
             <List>
-              {["Home", "Classfication", "Word2Vec"].map((text, index) => {
-                const href = index === 0 ? "/" : `/${text.toLowerCase()}`;
-                return (
-                  <Link key={index} href={href}>
-                    <ListItem button key={text}>
-                      <ListItemIcon>
-                        {index === 0 ? <HomeIcon /> : <PieChartIcon />}
-                      </ListItemIcon>
-                      <ListItemText primary={text} />
-                    </ListItem>
-                  </Link>
-                );
-              })}
+              {["Home", "Classfication", "Word2Vec", "Visualize"].map(
+                (text, index) => {
+                  const href = index === 0 ? "/" : `/${text.toLowerCase()}`;
+                  return (
+                    <Link key={index} href={href}>
+                      <ListItem button key={text}>
+                        <ListItemIcon>
+                          {index === 0 ? <HomeIcon /> : <PieChartIcon />}
+                        </ListItemIcon>
+                        <ListItemText primary={text} />
+                      </ListItem>
+                    </Link>
+                  );
+                }
+              )}
             </List>
             <Divider />
           </Drawer>
