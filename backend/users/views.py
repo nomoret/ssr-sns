@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from django.shortcuts import render, redirect, reverse
+from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse
 from . import models, serializers
@@ -26,6 +26,19 @@ class LoginView(APIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+class ReLoginView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        serializer = serializers.UserSerializer(request.user)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, format=None):
+        print("Asada")
+        return Response(status=status.HTTP_200_OK)
+
+
 class SignUpView(APIView):
     def post(self, request, format=None):
 
@@ -35,17 +48,13 @@ class SignUpView(APIView):
 
         try:
             models.User.objects.get(username=username)
-            return Response(
-                data={"error": "exist username"}, status=status.HTTP_403_FORBIDDEN
-            )
+            return Response(data="exist username", status=status.HTTP_403_FORBIDDEN)
         except models.User.DoesNotExist:
             pass
 
         try:
             models.User.objects.get(email=email)
-            return Response(
-                data={"error": "exist email"}, status=status.HTTP_403_FORBIDDEN
-            )
+            return Response(data="exist email", status=status.HTTP_403_FORBIDDEN)
         except models.User.DoesNotExist:
             pass
 
@@ -56,6 +65,5 @@ class SignUpView(APIView):
 
 
 def log_out(request):
-    print(request.headers)
     logout(request)
     return HttpResponse()
