@@ -11,10 +11,20 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import environ
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT_DIR = environ.Path(__file__) - 3
+env = environ.Env(DEBUG=(bool, True),)
 
+READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
+if READ_DOT_ENV_FILE:
+    # OS environment variables take precedence over variables from .env
+    env.read_env(str(ROOT_DIR.path(".env")))
+
+FAST_TEXT_MODEL_PATH = env("FAST_TEXT_MODEL_PATH", default=None)
+FONT_PATH = env("FONT_PATH", default="/usr/share/fonts/truetype/NanumGothic.ttf")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -122,6 +132,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = "/static/"
+# STATIC_ROOT = str(ROOT_DIR("staticfiles"))
+STATIC_ROOT = os.path.join(ROOT_DIR, "staticfiles")
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+    # "/analysis/static/",
+]
+
+# media files
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = "/media/"
 
 AUTH_USER_MODEL = "users.User"
 
