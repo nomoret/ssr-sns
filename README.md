@@ -11,8 +11,10 @@
 - [x] auth - log out
 - [x] auth - sign up
 - [x] auth - relog in
-- [ ] word vector - similiar view
-- [ ] word vector - word visualization
+- [x] word vector - similiar view
+- [x] word vector - word visualization
+- [x] word vector - a-b+c analogies word
+- [ ] classfier
 
 ## back
 
@@ -20,10 +22,13 @@
 - [x] install fasttext recent source build
 - [x] cors allow
 - [x] add user model
-- [ ] auth - log in
-- [ ] auth - log out
-- [ ] auth - sign up
-- [ ] auth - relog in
+- [x] auth - log in
+- [x] auth - log out
+- [x] auth - sign up
+- [x] auth - relog in
+- [x] api - similarity
+- [x] api - analogy
+- [ ] api - text classfier
 
 ## etc
 
