@@ -15,6 +15,7 @@ font_name = font_manager.FontProperties(fname=settings.FONT_PATH).get_name()
 rc("font", family=font_name)
 
 
+print(settings.FAST_TEXT_MODEL_PATH)
 model = fasttext.load_model(settings.FAST_TEXT_MODEL_PATH)
 tokenizer = Okt()
 
@@ -48,21 +49,22 @@ class Similarity(APIView):
         return Response(data=result, status=status.HTTP_200_OK)
 
 
-class analogy(APIView):
+class Analogy(APIView):
     def get(self, request, format=None):
-        try:
-            query = request.GET["query"]
-            k = request.GET["k"]
-        except:
-            return Response(status=status.HTTP_404_NOT_FOUND)
 
-        print(tokenizer.pos(query))
-        result = model.get_nearest_neighbors(query, int(k))
+        wordA = request.query_params.get("wordA", None)
+        wordB = request.query_params.get("wordB", None)
+        wordC = request.query_params.get("wordC", None)
+        k = request.query_params.get("k", "10")
+
+        analogies = model.get_analogies(wordA=wordA, wordB=wordB, wordC=wordC, k=int(k))
+        result = {"result": analogies}
+        print(result)
 
         return Response(data=result, status=status.HTTP_200_OK)
 
 
-class visualize(APIView):
+class Visualize(APIView):
     # def post(self, request, format=None):
     #     pca = PCA(n_components=2)
 
