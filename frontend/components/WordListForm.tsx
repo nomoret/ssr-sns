@@ -5,11 +5,13 @@ import { UserState } from "../reducers/user";
 import { AnalysisState, WORD_RELATION_REQUEST } from "../reducers/analysis";
 import { useDispatch } from "react-redux";
 import Chip from "@material-ui/core/Chip";
+import Button from "@material-ui/core/Button";
+import Input from "@material-ui/core/Input";
 import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
+    itemList: {
       display: "flex",
       justifyContent: "center",
       flexWrap: "wrap",
@@ -54,6 +56,7 @@ const WordListForm = () => {
   const wordInput = useInput("");
   const [wordList, setWordList] = useState<Array<Word>>(defaultWords);
 
+  const classes = useStyles();
   const dispatch = useDispatch();
 
   const handleSubmit = useCallback(
@@ -70,12 +73,6 @@ const WordListForm = () => {
     [wordInput]
   );
 
-  //   const deleteItem = useCallback((id: number) => {
-  //     console.log("delete", id);
-
-  //     const updateItemList = wordList.filter((v, i) => v.id != id);
-  //     setWordList(updateItemList);
-  //   }, []);
   const deleteItem = useCallback(
     (id: number) => {
       console.log("delete", id);
@@ -97,21 +94,32 @@ const WordListForm = () => {
     [wordList]
   );
 
+  const clearWordList = useCallback((e: any) => {
+    setWordList([]);
+  }, []);
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <input type="text" {...wordInput.bind} />
-        <input type="submit" value="추가" />
+        <Input type="text" {...wordInput.bind} required />
+        <Button variant="outlined" color="primary" type="submit">
+          Add
+        </Button>
       </form>
-      <button type="button" onClick={handleAnalysis}>
-        분석
-      </button>
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap"
-        }}
-      >
+      <div style={{ margin: "10px" }}>
+        <Button variant="contained" color="primary" onClick={handleAnalysis}>
+          Analysis
+        </Button>
+        <Button
+          style={{ marginLeft: "10px" }}
+          variant="contained"
+          color="primary"
+          onClick={clearWordList}
+        >
+          Clear Word List
+        </Button>
+      </div>
+      <div className={classes.itemList}>
         {wordList.map((v, i) => (
           <WordItem key={i} {...v} onRemove={deleteItem} />
         ))}
@@ -135,7 +143,7 @@ const WordItem: React.FC<Props> = ({ id, text, onRemove }) => {
       }}
       color="default"
       variant="outlined"
-      style={{ marginLeft: "5px" }}
+      // style={{ marginLeft: "5px" }}
     />
   );
 };

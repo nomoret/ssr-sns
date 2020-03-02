@@ -40,6 +40,11 @@ interface SimilarResult {
   result: item[] | null;
 }
 
+interface AnalogyResult {
+  query?: string[];
+  result: item[] | null;
+}
+
 export type AnalysisState = {
   isClassfying: boolean;
   isClassfied: boolean;
@@ -47,6 +52,10 @@ export type AnalysisState = {
   isSimilarWordFinding: boolean;
   isSimilarWordFinded: boolean;
   similarResult?: SimilarResult | null;
+
+  isAnaloging: boolean;
+  isAnalogied: boolean;
+  analogyResult?: AnalogyResult | null;
 
   wordRelationAnalysing: boolean;
   wordRelationAnalysed: boolean;
@@ -60,6 +69,10 @@ const initialState: AnalysisState = {
   isSimilarWordFinding: false,
   isSimilarWordFinded: false,
   similarResult: null,
+
+  isAnaloging: false,
+  isAnalogied: false,
+  analogyResult: null,
 
   wordRelationAnalysing: false,
   wordRelationAnalysed: false,
@@ -90,7 +103,28 @@ const analysisReducer = (state = initialState, action: AnalysAction) => {
         isSimilarWordFinded: false
       };
     }
-
+    case ANALOGY_WORDS_REQUEST: {
+      return {
+        ...state,
+        isAnaloging: true,
+        isAnalogied: false
+      };
+    }
+    case ANALOGY_WORDS_SUCCESS: {
+      return {
+        ...state,
+        isAnaloging: false,
+        isAnalogied: true,
+        analogyResult: action.data
+      };
+    }
+    case ANALOGY_WORDS_FAILURE: {
+      return {
+        ...state,
+        isAnaloging: false,
+        isAnalogied: false
+      };
+    }
     case WORD_RELATION_REQUEST: {
       return {
         ...state,

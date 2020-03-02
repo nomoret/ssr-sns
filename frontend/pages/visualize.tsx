@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { NextPage, NextPageContext } from "next";
+import { NextPage } from "next";
 
 import dynamic from "next/dynamic";
-import Axios from "axios";
 import WordListForm from "../components/WordListForm";
 import { useSelector } from "react-redux";
 import { RootState } from "../reducers";
 import { AnalysisState } from "../reducers/analysis";
+
 import Backdrop from "@material-ui/core/Backdrop";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 const DynamicComponentWithCustomLoading = dynamic(
   () => import("react-plotlyjs-ts"),
-  { ssr: false }
+  { loading: () => <p>loading....</p>, ssr: false }
 );
 
 interface ChartData {
