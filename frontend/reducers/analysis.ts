@@ -35,6 +35,11 @@ interface AnalysAction extends Action<AnalysisActionType> {
 
 type item = (number | string)[];
 
+interface ClassifyResult {
+  query: string[];
+  result: item[] | null;
+}
+
 interface SimilarResult {
   query: string[];
   result: item[] | null;
@@ -48,6 +53,7 @@ interface AnalogyResult {
 export type AnalysisState = {
   isClassfying: boolean;
   isClassfied: boolean;
+  classifyResult: ClassifyResult | null;
 
   isSimilarWordFinding: boolean;
   isSimilarWordFinded: boolean;
@@ -65,6 +71,7 @@ export type AnalysisState = {
 const initialState: AnalysisState = {
   isClassfying: false,
   isClassfied: false,
+  classifyResult: null,
 
   isSimilarWordFinding: false,
   isSimilarWordFinded: false,
@@ -81,6 +88,28 @@ const initialState: AnalysisState = {
 
 const analysisReducer = (state = initialState, action: AnalysAction) => {
   switch (action.type) {
+    case CLASSIFICATION_REQUEST: {
+      return {
+        ...state,
+        isClassfying: true,
+        isClassfied: false
+      };
+    }
+    case CLASSIFICATION_SUCCESS: {
+      return {
+        ...state,
+        isClassfying: false,
+        isClassfied: true,
+        classifyResult: action.data
+      };
+    }
+    case CLASSIFICATION_FAILURE: {
+      return {
+        ...state,
+        isClassfying: false,
+        isClassfied: false
+      };
+    }
     case SIMILIAR_WORDS_REQUEST: {
       return {
         ...state,

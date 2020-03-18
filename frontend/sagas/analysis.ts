@@ -9,8 +9,42 @@ import {
   WORD_RELATION_FAILURE,
   ANALOGY_WORDS_REQUEST,
   ANALOGY_WORDS_SUCCESS,
-  ANALOGY_WORDS_FAILURE
+  ANALOGY_WORDS_FAILURE,
+  CLASSIFICATION_REQUEST,
+  CLASSIFICATION_SUCCESS,
+  CLASSIFICATION_FAILURE
 } from "../reducers/analysis";
+
+function classficationAPI({
+  sentence,
+  k = "10"
+}: {
+  sentence: string;
+  k: string;
+}) {
+  return axios.get(`analysis/classfier/cnn?sentence=${sentence}&k=${k}`, {
+    withCredentials: true
+  });
+}
+
+function* classfication(action: { type: string; data: any }) {
+  try {
+    const result = yield call(classficationAPI, action.data);
+    yield put({
+      type: CLASSIFICATION_SUCCESS,
+      data: result.data
+    });
+  } catch (e) {
+    console.error(e);
+    yield put({
+      type: CLASSIFICATION_FAILURE
+    });
+  }
+}
+
+function* watchClassficaiton() {
+  yield takeEvery(CLASSIFICATION_REQUEST, classfication);
+}
 
 function similarWordsAPI({ query, k }: { query: string; k: string }) {
   return axios.get(`analysis/fasttext/simliarity?query=${query}&k=${k}`, {
@@ -20,7 +54,6 @@ function similarWordsAPI({ query, k }: { query: string; k: string }) {
 
 function* similarWords(action: { type: string; data: any }) {
   try {
-    yield delay(2000);
     const result = yield call(similarWordsAPI, action.data);
     yield put({
       type: SIMILIAR_WORDS_SUCCESS,
@@ -80,7 +113,6 @@ function wordRelationAPI(data: any) {
 
 function* wordRelation(action: { type: string; data: any }) {
   try {
-    yield delay(2000);
     const result = yield call(wordRelationAPI, action.data);
     yield put({
       type: WORD_RELATION_SUCCESS,
@@ -100,6 +132,7 @@ function* watchWordRelation() {
 
 export default function* userSaga() {
   yield all([
+    fork(watchClassficaiton),
     fork(watchSimilarWords),
     fork(watchAnalogyWords),
     fork(watchWordRelation)
