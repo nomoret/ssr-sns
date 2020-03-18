@@ -91,7 +91,7 @@ const AnalogiesForm = () => {
     (e: React.ChangeEvent<{ value: unknown }>) => {
       setRankCount(e.target.value as number);
     },
-    [rankCount]
+    []
   );
 
   return (
@@ -222,21 +222,21 @@ const SimilarForm = () => {
 
       setValue("");
     },
-    [value]
+    [value, rankCount]
   );
 
   const handleOnChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setValue(e.target.value);
     },
-    [value]
+    []
   );
 
   const handleSelectChange = useCallback(
     (e: React.ChangeEvent<{ value: unknown }>) => {
       setRankCount(e.target.value as number);
     },
-    [rankCount]
+    []
   );
 
   return (

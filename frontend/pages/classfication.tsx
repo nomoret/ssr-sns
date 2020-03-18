@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { NextPage, NextPageContext } from "next";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
@@ -10,47 +11,59 @@ import MenuItem from "@material-ui/core/MenuItem";
 import InputLabel from "@material-ui/core/InputLabel";
 import useBlockIfNotLogin from "../lib/useBlockIfNotLogin";
 import useBlockIfNotLoginClient from "../lib/useBlockIfNotLoginClient";
-
-interface Result {
-  word: string;
-  per: number;
-}
+import { RootState } from "../reducers";
+import { AnalysisState, CLASSIFICATION_REQUEST } from "../reducers/analysis";
+import { CircularProgress } from "@material-ui/core";
 
 interface Props {}
 
+const defaultOptionList = Array(10)
+  .fill(0, 0, 10)
+  .map((v, i) => i + 1);
+
 const Classfication: NextPage<Props> = () => {
-  const router = useBlockIfNotLoginClient();
+  useBlockIfNotLoginClient();
 
   const [value, setValue] = useState("");
   const [rankCount, setRankCount] = useState(10);
-  const [resultList, setResultList] = useState<Result[]>([]);
+  const [optionList] = useState(defaultOptionList);
 
-  const optionList = Array(10)
-    .fill(0, 0, 10)
-    .map((v, i) => i + 1);
+  const { classifyResult, isClassfying, isClassfied } = useSelector<
+    RootState,
+    AnalysisState
+  >(state => state.analysis);
+
+  const dispatch = useDispatch();
 
   const handleOnSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
-      setResultList([{ word: value, per: 80 }]);
+      dispatch({
+        type: CLASSIFICATION_REQUEST,
+        data: {
+          sentence: value,
+          k: rankCount
+        }
+      });
+
       setValue("");
     },
-    [value]
+    [value, rankCount]
   );
 
   const handleOnChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setValue(e.target.value);
     },
-    [value]
+    []
   );
 
   const handleSelectChange = useCallback(
     (e: React.ChangeEvent<{ value: unknown }>) => {
       setRankCount(e.target.value as number);
     },
-    [rankCount]
+    []
   );
 
   return (
@@ -82,15 +95,27 @@ const Classfication: NextPage<Props> = () => {
           <Button type="submit" fullWidth variant="contained" color="primary">
             Predict
           </Button>
+          {isClassfying && (
+            <div
+              style={{
+                position: "relative",
+                textAlign: "center",
+                marginTop: -24
+              }}
+            >
+              <CircularProgress size={48} />
+            </div>
+          )}
         </form>
       </div>
       <div>
         <div style={{ display: "flex", alignItems: "baseline" }}>
           <h3>Result</h3>
         </div>
-        {resultList &&
-          resultList.map(({ word, per }, i) => (
-            <div key={i}>{`${word} - ${per} %`}</div>
+        {isClassfied &&
+          classifyResult &&
+          classifyResult.result?.map((v, i) => (
+            <div key={i}>{`${v[0]} - ${v[1]} %`}</div>
           ))}
       </div>
     </Container>
